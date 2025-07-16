@@ -6,31 +6,28 @@ from PIL import Image
 import numpy as np
 import pymongo
 
-# Flask setup
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Load model and encoder
+# Load model and label encoder
 with open('model/disease_model.pkl', 'rb') as f:
     model = pickle.load(f)
+
 with open('model/label_encoder.pkl', 'rb') as f:
-    label_encoder = pickle.load(f)
+    le = pickle.load(f)
 
 # MongoDB setup
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client["plant_disease_db"]
 collection = db["predictions"]
 
-# Image preprocessing
 def preprocess_image(image_path):
     img = Image.open(image_path).convert("RGB")
     img = img.resize((128, 128))
     img_array = np.array(img) / 255.0
-    img_array = img_array.reshape(1, -1)
-    return img_array
+    return img_array.reshape(1, -1)
 
-# Routes
 @app.route('/')
 def home():
     return render_template("index.html")
@@ -39,6 +36,7 @@ def home():
 def predict():
     if 'image' not in request.files:
         return redirect(request.url)
+
     image = request.files['image']
     if image.filename == '':
         return redirect(request.url)
@@ -48,13 +46,13 @@ def predict():
     image.save(file_path)
 
     processed_img = preprocess_image(file_path)
-    prediction = model.predict(processed_img)[0]
-    predicted_label = label_encoder.inverse_transform([prediction])[0]
+    pred_encoded = model.predict(processed_img)[0]
+    prediction = le.inverse_transform([pred_encoded])[0]
 
-    # Save to MongoDB
-    collection.insert_one({"filename": filename, "prediction": predicted_label})
+    collection.insert_one({"filename": filename, "prediction": prediction})
 
-    return render_template("index.html", prediction=predicted_label, image_path=file_path)
+    return render_template("index.html", prediction=prediction, image_path=file_path)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
