@@ -17,8 +17,8 @@ with open('model/disease_model.pkl', 'rb') as f:
 with open('model/label_encoder.pkl', 'rb') as f:
     label_encoder = pickle.load(f)
 
-# MongoDB setup
-client = pymongo.MongoClient("mongodb+srv://tejaswani:<db_password>@cluster0.skizmae.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+# MongoDB Atlas setup (replace <your_password> with your real password)
+client = pymongo.MongoClient("mongodb+srv://tejaswani:<your_password>@cluster0.skizmae.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client["plant_disease_db"]
 collection = db["predictions"]
 
@@ -56,7 +56,7 @@ def predict():
 
     return render_template("index.html", prediction=predicted_label, image_path=file_path)
 
+# For Render deployment
 if __name__ == "__main__":
-    import os
-    port = int(os.environ.get("PORT", 10000))  # Render provides PORT env
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
