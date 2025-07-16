@@ -1,5 +1,6 @@
-Flask
+flask
 numpy
-scikit-learn
 pillow
+scikit-learn
 pymongo
+werkzeug
