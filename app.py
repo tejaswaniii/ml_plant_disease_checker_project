@@ -18,7 +18,7 @@ with open('model/label_encoder.pkl', 'rb') as f:
     label_encoder = pickle.load(f)
 
 # MongoDB setup
-client = pymongo.MongoClient("mongodb://localhost:27017/")
+client = pymongo.MongoClient("mongodb+srv://tejaswani:<db_password>@cluster0.skizmae.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client["plant_disease_db"]
 collection = db["predictions"]
 
