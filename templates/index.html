@@ -2,126 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title> Potato Plant Disease Detector</title>
+    <title>Plant Disease Detector</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to right, #f0fdf4, #ffffff);
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px;
-        }
-
-        h1 {
-            color: #2e7d32;
-            font-size: 2.5rem;
-        }
-
-        form {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        input[type="file"] {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: #4caf50;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #388e3c;
-        }
-
-        .preview {
-            margin-top: 20px;
-        }
-
-        .preview img {
-            max-width: 300px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .result {
-            margin-top: 30px;
-            background: #e8f5e9;
-            border-left: 6px solid #43a047;
-            padding: 20px;
-            border-radius: 8px;
-            width: 60%;
-        }
-
-        .note {
-            margin-top: 40px;
-            font-size: 0.9rem;
-            color: #666;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 40px; }
+        img { max-width: 300px; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <h1>🌿 Potato Plant Disease Detection</h1>
-    <p>Upload a plant leaf image to check if it's healthy or diseased.</p>
-
-    <form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-        <input type="file" name="image" id="imageInput" accept="image/*" required onchange="previewImage(event)">
-        <br>
-        <button type="submit">🔍 Predict</button>
+    <h1>🌿 Plant Disease Detection</h1>
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" required>
+        <button type="submit">Predict</button>
     </form>
 
-    <div class="preview" id="previewContainer" style="display: none;">
-        <h3>📸 Image Preview:</h3>
-        <img id="previewImage" src="#" alt="Preview">
-    </div>
-
     {% if prediction %}
-        <div class="result">
-            <h2>🩺 Prediction: <strong>{{ prediction }}</strong></h2>
-            <img src="{{ image_path }}" alt="Predicted Leaf" width="300">
-        </div>
+        <h2>Prediction: {{ prediction }}</h2>
+        <img src="{{ image_path }}" alt="Uploaded Leaf">
     {% endif %}
-
-    <p class="note">Built with Flask & Machine Learning | Trained on PlantVillage Dataset </p>
-
-    <script>
-        function previewImage(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('previewImage');
-            const container = document.getElementById('previewContainer');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function () {
-                    preview.src = reader.result;
-                    container.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function validateForm() {
-            const input = document.getElementById('imageInput');
-            if (!input.value) {
-                alert("Please upload an image before submitting.");
-                return false;
-            }
-            return true;
-        }
-    </script>
 </body>
 </html>
